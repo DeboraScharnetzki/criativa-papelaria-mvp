@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Meus pedidos · Criativa{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">ACOMPANHAMENTO</p><h1>Meus pedidos</h1><p class="muted">Consulte encomendas, prazos e atualize o andamento.</p></div><a class="button primary" href="{{ url_for('new_order') }}">＋ Novo pedido</a></div>
+<section class="panel">
+<form class="filters" method="get"><div class="search-field"><label class="sr-only" for="q">Buscar pedido</label><input id="q" name="q" value="{{ q }}" placeholder="Buscar por cliente ou descrição"></div><div><label class="sr-only" for="status-filter">Filtrar por status</label><select id="status-filter" name="status"><option value="">Todos os status</option>{% for status in statuses %}<option value="{{ status }}" {% if status_filter == status %}selected{% endif %}>{{ status }}</option>{% endfor %}</select></div><button class="button secondary" type="submit">Filtrar</button></form>
+{% if orders %}<div class="table-wrap"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Data</th><th>Prazo</th><th>Valor</th><th>Status</th><th>Atualizar</th></tr></thead><tbody>
+{% for order in orders %}<tr><td><strong>#{{ order.id }}</strong><br><span class="subtext">{{ order.description }}</span>{% if order.notes %}<details><summary>Observações</summary><p>{{ order.notes }}</p></details>{% endif %}</td><td>{{ order.client_name }}</td><td>{{ order.order_date }}</td><td>{{ order.deadline }}</td><td>{{ order.value_cents|brl }}</td><td><span class="status">{{ order.status }}</span></td><td><form class="status-form" method="post" action="{{ url_for('update_status', order_id=order.id) }}"><label class="sr-only" for="status-{{ order.id }}">Novo status do pedido {{ order.id }}</label><select id="status-{{ order.id }}" name="status">{% for status in statuses %}<option value="{{ status }}" {% if order.status == status %}selected{% endif %}>{{ status }}</option>{% endfor %}</select><button class="small-button" type="submit">Salvar</button></form></td></tr>{% endfor %}
+</tbody></table></div>{% else %}<div class="empty-state"><div class="empty-icon">⌕</div><h3>Nenhum pedido encontrado</h3><p>Cadastre um pedido ou altere os filtros de busca.</p><a class="button primary" href="{{ url_for('new_order') }}">Cadastrar pedido</a></div>{% endif %}
+</section>
+{% endblock %}

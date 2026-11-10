@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Criativa Papelaria Personalizada{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">C</span><span>Criativa<small>Papelaria Personalizada</small></span></a>
+      <nav aria-label="Navegação principal">
+        <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' else '' }}">▦ <span>Painel inicial</span></a>
+        <a href="{{ url_for('clients') }}" class="{{ 'active' if request.endpoint == 'clients' else '' }}">♙ <span>Clientes</span></a>
+        <a href="{{ url_for('orders') }}" class="{{ 'active' if request.endpoint == 'orders' else '' }}">▤ <span>Meus pedidos</span></a>
+        <a href="{{ url_for('new_order') }}" class="new-link">＋ <span>Novo pedido</span></a>
+      </nav>
+      <div class="sidebar-bottom">MVP · Gestão de pedidos</div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar"><span>Gestão de encomendas</span><span class="user-pill">● Ambiente local</span></header>
+      <section class="page-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-list" role="status">
+              {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+      </section>
+      <footer>© Criativa Papelaria Personalizada · Protótipo acadêmico</footer>
+    </main>
+  </div>
+</body>
+</html>

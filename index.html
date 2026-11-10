@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Painel inicial · Criativa{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><p class="eyebrow">VISÃO GERAL</p><h1>Olá! Vamos organizar seus pedidos.</h1><p class="muted">Acompanhe clientes, prazos e produção em um só lugar.</p></div>
+  <a class="button primary" href="{{ url_for('new_order') }}">＋ Novo pedido</a>
+</div>
+<div class="stats-grid">
+  <article class="stat-card"><span class="stat-icon purple">▤</span><p>Total de pedidos</p><strong>{{ counts.total }}</strong><small>Pedidos cadastrados</small></article>
+  <article class="stat-card"><span class="stat-icon orange">◷</span><p>Pendentes</p><strong>{{ counts.pending }}</strong><small>Aguardando produção</small></article>
+  <article class="stat-card"><span class="stat-icon blue">✦</span><p>Em produção</p><strong>{{ counts.production }}</strong><small>Em andamento</small></article>
+  <article class="stat-card"><span class="stat-icon green">✓</span><p>Concluídos</p><strong>{{ counts.completed }}</strong><small>Prontos para entrega</small></article>
+</div>
+<section class="panel">
+  <div class="panel-heading"><div><h2>Pedidos recentes</h2><p class="muted">Acompanhe os últimos registros da papelaria.</p></div><a class="text-link" href="{{ url_for('orders') }}">Ver todos →</a></div>
+  {% if recent_orders %}
+  <div class="table-wrap"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Prazo</th><th>Valor</th><th>Status</th></tr></thead><tbody>
+  {% for order in recent_orders %}<tr><td>#{{ order.id }} · {{ order.description }}</td><td>{{ order.client_name }}</td><td>{{ order.deadline }}</td><td>{{ order.value_cents|brl }}</td><td><span class="status status-{{ order.status|lower|replace(' ', '-') }}">{{ order.status }}</span></td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<div class="empty-state"><div class="empty-icon">▤</div><h3>Seus pedidos aparecerão aqui</h3><p>Cadastre um cliente e crie o primeiro pedido para começar.</p><a class="button primary" href="{{ url_for('clients') }}">Cadastrar cliente</a></div>{% endif %}
+</section>
+{% endblock %}
