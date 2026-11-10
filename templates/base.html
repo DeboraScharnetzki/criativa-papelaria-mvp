@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -5,33 +6,159 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Criativa Papelaria Personalizada{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <script>
+    try {
+      if (localStorage.getItem("altoContraste") === "true") {
+        document.documentElement.classList.add("alto-contraste");
+      }
+    } catch (e) {
+      // O sistema continua funcionando sem armazenamento local.
+    }
+  </script>
+
+  <style>
+    .accessibility-button {
+      cursor: pointer;
+      border: 2px solid currentColor;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font: inherit;
+      font-weight: 700;
+      background: #fff;
+      color: #202020;
+    }
+
+    .accessibility-button:focus-visible {
+      outline: 3px solid #005fcc;
+      outline-offset: 3px;
+    }
+
+    html.alto-contraste,
+    html.alto-contraste body,
+    html.alto-contraste .app-shell,
+    html.alto-contraste .sidebar,
+    html.alto-contraste .main-content,
+    html.alto-contraste .topbar,
+    html.alto-contraste .page-content,
+    html.alto-contraste footer,
+    html.alto-contraste .card,
+    html.alto-contraste .stat-card,
+    html.alto-contraste .panel,
+    html.alto-contraste .flash,
+    html.alto-contraste .user-pill {
+      background: #000 !important;
+      color: #fff !important;
+      border-color: #fff !important;
+    }
+
+    html.alto-contraste :is(h1,h2,h3,h4,p,span,small,label,td,th,strong) {
+      color: #fff !important;
+    }
+
+    html.alto-contraste a {
+      color: #ffff00 !important;
+    }
+
+    html.alto-contraste :is(input,select,textarea,button) {
+      background: #000 !important;
+      color: #fff !important;
+      border: 2px solid #ffff00 !important;
+    }
+
+    html.alto-contraste .accessibility-button {
+      background: #ffff00 !important;
+      color: #000 !important;
+    }
+
+    html.alto-contraste :focus-visible {
+      outline: 3px solid #00ffff !important;
+      outline-offset: 3px;
+    }
+  </style>
 </head>
+
 <body>
   <div class="app-shell">
     <aside class="sidebar">
-      <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">C</span><span>Criativa<small>Papelaria Personalizada</small></span></a>
+      <a class="brand" href="{{ url_for('index') }}">
+        <span class="brand-mark">C</span>
+        <span>Criativa<small>Papelaria Personalizada</small></span>
+      </a>
+
       <nav aria-label="Navegação principal">
         <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' else '' }}">▦ <span>Painel inicial</span></a>
         <a href="{{ url_for('clients') }}" class="{{ 'active' if request.endpoint == 'clients' else '' }}">♙ <span>Clientes</span></a>
         <a href="{{ url_for('orders') }}" class="{{ 'active' if request.endpoint == 'orders' else '' }}">▤ <span>Meus pedidos</span></a>
         <a href="{{ url_for('new_order') }}" class="new-link">＋ <span>Novo pedido</span></a>
       </nav>
+
       <div class="sidebar-bottom">MVP · Gestão de pedidos</div>
     </aside>
+
     <main class="main-content">
-      <header class="topbar"><span>Gestão de encomendas</span><span class="user-pill">● Ambiente local</span></header>
+      <header class="topbar">
+        <span>Gestão de encomendas</span>
+
+        <button
+          type="button"
+          id="contrast-toggle"
+          class="accessibility-button"
+          aria-pressed="false"
+          aria-label="Ativar alto contraste"
+        >
+          ◐ Alto contraste
+        </button>
+
+        <span class="user-pill">● Sistema web</span>
+      </header>
+
       <section class="page-content">
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             <div class="flash-list" role="status">
-              {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
             </div>
           {% endif %}
         {% endwith %}
+
         {% block content %}{% endblock %}
       </section>
+
       <footer>© Criativa Papelaria Personalizada · Protótipo acadêmico</footer>
     </main>
   </div>
+
+  <script>
+    const contrastButton = document.getElementById("contrast-toggle");
+
+    function updateContrastButton() {
+      const enabled = document.documentElement.classList.contains("alto-contraste");
+      contrastButton.setAttribute("aria-pressed", String(enabled));
+      contrastButton.setAttribute(
+        "aria-label",
+        enabled ? "Desativar alto contraste" : "Ativar alto contraste"
+      );
+      contrastButton.textContent = enabled
+        ? "◐ Desativar alto contraste"
+        : "◐ Alto contraste";
+    }
+
+    contrastButton.addEventListener("click", function () {
+      const enabled = document.documentElement.classList.toggle("alto-contraste");
+
+      try {
+        localStorage.setItem("altoContraste", String(enabled));
+      } catch (e) {
+        // A preferência funciona nesta página mesmo sem armazenamento.
+      }
+
+      updateContrastButton();
+    });
+
+    updateContrastButton();
+  </script>
 </body>
 </html>
